@@ -1,0 +1,67 @@
+<script type="text/javascript" src="https://www.google.com/jsapi?autoload={'modules':[{'name':'visualization','version':'1.1','packages':['scatter']}]}"></script>
+
+<script type="text/javascript">
+
+    google.load('visualization', '1.1', {packages: ['scatter']});
+    google.setOnLoadCallback(drawChart);
+
+    function drawChart () {
+
+        var data = new google.visualization.DataTable();
+        data.addColumn('number', 't');
+        <% if @chart.show_BT %>data.addColumn('number', 'BT');<% end  %>
+        <% if @chart.show_ET %>data.addColumn('number', 'ET');<% end  %>
+        <% if @chart.show_fan %>data.addColumn('number', 'Fan');<% end  %>
+        <% if @chart.show_heat %>data.addColumn('number', 'Heat');<% end  %>
+        <% if @chart.show_PID %>data.addColumn('number', 'P');<% end  %>
+        <% if @chart.show_PID %>data.addColumn('number', 'I');<% end  %>
+        <% if @chart.show_PID %>data.addColumn('number', 'D');<% end  %>
+        <% if @chart.show_PID %>data.addColumn('number', 'PID');<% end  %>
+        <% if @chart.show_BT_ROR_M %>data.addColumn('number', 'BT-ROR-M');<% end  %>
+        <% if @chart.show_BT_ROR %>data.addColumn('number', 'BT-ROR');<% end  %>
+        <% if @chart.show_ET_ROR %>data.addColumn('number', 'ET-ROR');<% end  %>
+
+        data.addRows([
+            <%= @data %>
+        ]);
+
+        var options = {
+            chart: {
+                title: '<%= @title %>',
+                subtitle: '<%= @subtitle %>'
+            },
+            width: 1400,
+            height: 800,
+            series: {
+                <% if @chart.show_BT %>0: {axis: 'T'},<% end %>
+                <% if @chart.show_ET %>1: {axis: 'T'},<% end %>
+                <% if @chart.show_fan %>3: {axis: 'ROR'},<% end %>
+                <% if @chart.show_heat %>2: {axis: 'ROR'},<% end %>
+                <% if @chart.show_PID %>3: {axis: 'ROR'},<% end %>
+                <% if @chart.show_PID %>4: {axis: 'ROR'},<% end %>
+                <% if @chart.show_PID %>5: {axis: 'ROR'},<% end %>
+                <% if @chart.show_PID %>6: {axis: 'ROR'},<% end %>
+                <% if @chart.show_BT_ROR %>5: {axis: 'ROR'},<% end %>
+                <% if @chart.show_ET_ROR %>6: {axis: 'ROR'},<% end  %>
+            },
+            axes: {
+                y: {
+                    'T': {label: 'T'},
+                    'ROR': {label: '%'}
+                }
+            },
+            pointSize: 30
+        };
+
+        var chart = new google.charts.Scatter(document.getElementById('scatter_dual_y'));
+
+        chart.draw(data, options);
+
+    }
+</script>
+
+<div class="headerdiv"><h1>jetKafe roast profile chart</h1></div>
+
+<div id="scatter_dual_y" style="margin:10px;"></div>
+
+<%= @log %>

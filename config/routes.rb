@@ -12,6 +12,9 @@ Rails.application.routes.draw do
 
   get 'discussion' => 'pages#discussion'
 
+  get 'uploadprofile' => 'pages#uploadprofile'
+  post 'uploadprofile' => 'pages#createchart'
+
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 
