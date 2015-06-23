@@ -1,3 +1,5 @@
+include ActionView::Helpers::NumberHelper
+
 class PagesController < ApplicationController
   def home
   end
@@ -19,6 +21,10 @@ class PagesController < ApplicationController
 
     # create the profile
     profile = RoastProfile.new
+    profile.target_dry_time = params[:target_dry_time].to_f
+    profile.target_Maillard_time = params[:target_Maillard_time].to_f
+    profile.target_dev_time = params[:target_dev_time].to_f
+    profile.target_drop_temp = params[:target_drop_temp].to_f
 
     # set up the chart specifications
     @chart = Chart.new
@@ -35,10 +41,12 @@ class PagesController < ApplicationController
 
     max_t = 2000000
 
+    # CSS for the tables
+    @style = "<style>.datatable { border: solid 1px gray; border-collapse: collapse;}
+              .datatable td,th { border: solid 1px gray; text-align:center; padding:5px;}</style>".html_safe
+
     # our profile data is in params[:profile], which is a text string
-    datatable = "<style>#datatable { border: solid 1px gray;border-collapse: collapse;}
-              #datatable td { border: solid 1px gray;text-align:right;}</style>
-            <table id='datatable'>#{LogEntry.get_html_header}".html_safe
+    datatable = "<table class='datatable'>#{LogEntry.get_html_header}".html_safe
     @data = "".html_safe
     line = ""
     lastentry = nil
@@ -53,7 +61,7 @@ class PagesController < ApplicationController
         # is this the PID start line?
         if line.include? "PID initialized"
           # so the next entry is the first PID
-          # which means actually the one after that is the first to use the result
+          # which means actualy the one after that is the first to use the result
           # cycle time is 600ms, so put us before the right one
           @chart.PID_start = lastentry.t + 1000
         end
@@ -97,14 +105,19 @@ class PagesController < ApplicationController
     end
     datatable << "</table>".html_safe
 
+    # now display the summary data
     @log = "Entry count: #{count}<br />
             Max t: #{max_t_measured}<br />
             Max BT: #{max_BT_measured}<br />
             Temp by minute: #{temp_by_minute}<br />
             Average ROR for min #{get_average_ror(temp_by_minute)}<br/>".html_safe
     @log << "PID Init I: #{@init_i} Kp: #{@Kp} Ki: #{@Ki*10} Kd: #{@Kd} <br />".html_safe if @chart.show_PID
-    @log << "Average cycle time: #{max_t_measured / count}ms<br />
-            #{profile.to_html}<br /><br />#{datatable}".html_safe
+    @log << "Average cycle time: #{max_t_measured / count}ms
+            <br /><br />
+            #{profile.to_html}<br /><br />".html_safe
+
+    # finally display the full data in easily-copyable form
+    @log << "#{datatable}".html_safe
 
     render :chart
   end
@@ -162,24 +175,68 @@ class Chart
 end
 
 class RoastProfile
-  attr_accessor :dry_time, :FC_time, :Maillard_time, :dev_time, :roast_time, :drop_temp
+  attr_accessor :dry_time, :FC_time, :Maillard_time, :dev_time, :roast_time, :drop_temp,
+                :target_dry_time, :target_Maillard_time, :target_dev_time, :target_drop_temp
 
   def to_html
-    "<table>
+    "<table class='datatable'>
         <tr>
-          <td>Drying time:</td><td>#{@dry_time.nil? ? "-" : @dry_time/1000} (s)</td>
-          <td>#{@dry_time.nil? ? "-" : (@dry_time.to_f/1000/60).round(1)} (min)</td></tr>
+          <th>&nbsp;</th>
+          <th colspan=2>Actual</th>
+          <th colspan=2>Target</th>
+          <th>Error</th>
+        </tr>
         <tr>
-          <td>Time in Maillard:</td><td>#{@Maillard_time.nil? ? "-" : @Maillard_time/1000} (s)</td>
-          <td>#{@Maillard_time.nil? ? "-" : (@Maillard_time.to_f/1000/60).round(1)} (min)</td></tr>
+          <td>Drying time:</td>
+          <td>#{@dry_time.nil? ? "-" : @dry_time/1000} (s)</td>
+          <td>#{@dry_time.nil? ? "-" : (@dry_time.to_f/1000/60).round(1)} (min)</td>
+          <td>#{@target_dry_time.nil? ? "-" : @target_dry_time/1000} (s)</td>
+          <td>#{@target_dry_time.nil? ? "-" : (@target_dry_time.to_f/1000/60).round(1)} (min)</td>
+          <td align=center>#{(@dry_time.nil? || @target_dry_time.nil?) ?
+                  "-" : number_to_percentage((@dry_time - @target_dry_time)*100 / @target_dry_time, precision: 1) }</td>
+        </tr>
+        <tr>
+          <td>Time in Maillard:</td>
+          <td>#{@Maillard_time.nil? ? "-" : @Maillard_time/1000} (s)</td>
+          <td>#{@Maillard_time.nil? ? "-" : (@Maillard_time.to_f/1000/60).round(1)} (min)</td>
+          <td>#{@target_Maillard_time.nil? ? "-" : @target_Maillard_time/1000} (s)</td>
+          <td>#{@target_Maillard_time.nil? ? "-" : (@target_Maillard_time.to_f/1000/60).round(1)} (min)</td>
+          <td align=center>#{(@Maillard_time.nil? || @target_Maillard_time.nil?) ?
+                  "-" : number_to_percentage((@Maillard_time - @target_Maillard_time)*100 / @target_Maillard_time, precision: 1) }</td>
+       </tr>
         <tr><td>Total time to FC:</td>
           <td>#{@FC_time.nil? ? "-" : @FC_time/1000} (s)</td>
-          <td>#{@FC_time.nil? ? "-" : (@FC_time.to_f/1000/60).round(1)} (min)</td></tr>
-        <tr><td>Dev time:</td><td>#{@dev_time.nil? ? "-" : @dev_time/1000} (s)</td>
-          <td>#{@dev_time.nil? ? "-" : (@dev_time.to_f/1000/60).round(1)} (min)</td></tr>
-        <tr><td>Total roast time:</td><td>#{@roast_time.nil? ? "-" : @roast_time/1000} (s)</td>
-          <td>#{@roast_time.nil? ? "-" : (@roast_time.to_f/1000/60).round(1)} (min)</td></tr>
-        <tr><td>Drop temp:</td><td>#{@drop_temp}F</td><td>&nbsp;</td></tr>
+          <td>#{@FC_time.nil? ? "-" : (@FC_time.to_f/1000/60).round(1)} (min)</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>Dev time:</td>
+          <td>#{@dev_time.nil? ? "-" : @dev_time/1000} (s)</td>
+          <td>#{@dev_time.nil? ? "-" : (@dev_time.to_f/1000/60).round(1)} (min)</td>
+          <td>#{@target_dev_time.nil? ? "-" : @target_dev_time/1000} (s)</td>
+          <td>#{@target_dev_time.nil? ? "-" : (@target_dev_time.to_f/1000/60).round(1)} (min)</td>
+          <td align=center>#{(@dev_time.nil? || @target_dev_time.nil?) ?
+                  "-" : number_to_percentage((@dev_time - @target_dev_time)*100 / @target_dev_time, precision: 1) }</td>
+       </tr>
+       <tr>
+          <td>Total roast time:</td>
+          <td>#{@roast_time.nil? ? "-" : @roast_time/1000} (s)</td>
+          <td>#{@roast_time.nil? ? "-" : (@roast_time.to_f/1000/60).round(1)} (min)</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+          <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>Drop temp:</td>
+          <td>#{@drop_temp}F</td>
+          <td>&nbsp;</td>
+          <td>#{@target_drop_temp.nil? ? "-" : @target_drop_temp.to_s + "F" }</td>
+          <td>&nbsp;</td>
+          <td align=center>#{(@drop_temp.nil? || @target_drop_temp.nil?) ?
+                  "-" : number_to_percentage((@drop_temp - @target_drop_temp)*100 / @target_drop_temp, precision: 1) }</td>
+        </tr>
      </table>".html_safe
   end
 

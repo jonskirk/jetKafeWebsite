@@ -7,10 +7,22 @@
 
     <div>Chart title: <%= text_field_tag :title %> Created by: <%= text_field_tag :by %></div>
 
-    <div>Enter PID values to see impact on heat (ignored if blank):<br />
+    <div>
+      Enter PID values to see impact on heat (ignored if blank):
+      <br />
       Initial Iterm: <%= text_field_tag :start %>
-      Kp: <%= text_field_tag :Kp %>
-         Ki: <%= text_field_tag :Ki %> Kd: <%= text_field_tag :Kd %></div>
+         Kp: <%= text_field_tag :Kp %>
+         Ki: <%= text_field_tag :Ki %>
+         Kd: <%= text_field_tag :Kd %>
+      <br />
+      Enter target profile for comparison (ignored if blank):
+      <br />
+      Dry time (ms): <%= text_field_tag :target_dry_time %>
+      Maillard time (ms): <%= text_field_tag :target_Maillard_time %>
+      Dev time (ms): <%= text_field_tag :target_dev_time %>
+      Drop temp (F): <%= text_field_tag :target_drop_temp %>
+    </div>
+
 
     <div>Roast log (paste serial monitor output):<br />
       <%= text_area_tag :profile, nil, :style => 'width:500px;height:500px;' %></div>
