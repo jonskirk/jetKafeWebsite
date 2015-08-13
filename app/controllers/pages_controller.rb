@@ -21,10 +21,17 @@ class PagesController < ApplicationController
 
     # create the profile
     profile = RoastProfile.new
-    profile.target_dry_time = params[:target_dry_time].to_f
-    profile.target_Maillard_time = params[:target_Maillard_time].to_f
-    profile.target_dev_time = params[:target_dev_time].to_f
-    profile.target_drop_temp = params[:target_drop_temp].to_f
+    params[:target_dry_time].blank? ?
+        profile.target_dry_time = 180000.0 : profile.target_dry_time = params[:target_dry_time].to_f
+    params[:target_Maillard_time].blank? ?
+        profile.target_Maillard_time = 180000.0 :
+        profile.target_Maillard_time = params[:target_Maillard_time].to_f
+    params[:target_dev_time].blank? ?
+        profile.target_dev_time = 180000.0 :
+      profile.target_dev_time = params[:target_dev_time].to_f
+    params[:target_drop_temp].blank? ?
+        profile.target_drop_temp = 430 :
+        profile.target_drop_temp = params[:target_drop_temp].to_f
 
     # set up the chart specifications
     @chart = Chart.new
@@ -187,6 +194,16 @@ class RoastProfile
           <th>Error</th>
         </tr>
         <tr>
+          <td colspan=6 style='text-align:left;'>
+            287F : target #{(@target_dry_time/1000).round}s : actual #{@dry_time.nil? ? "-" : @dry_time/1000}s (#{(@dry_time.nil? || @target_dry_time.nil?) ?
+        "-" : number_to_percentage((@dry_time - @target_dry_time)*100 / @target_dry_time, precision: 1) })<br />
+            400F : target #{(@target_Maillard_time/1000).round}s : actual #{@Maillard_time.nil? ? "-" : @Maillard_time/1000}s (#{(@Maillard_time.nil? || @target_Maillard_time.nil?) ?
+        "-" : number_to_percentage((@Maillard_time - @target_Maillard_time)*100 / @target_Maillard_time, precision: 1) })<br />
+            430F : target #{(@target_dev_time/1000).round}s : actual #{@dev_time.nil? ? "-" : @dev_time/1000}s (#{(@dev_time.nil? || @target_dry_time.nil?) ?
+        "-" : number_to_percentage((@dev_time - @target_dev_time)*100 / @target_dev_time, precision: 1) })<br />
+          </td>
+        </tr>
+        <tr>
           <td>Drying time:</td>
           <td>#{@dry_time.nil? ? "-" : @dry_time/1000} (s)</td>
           <td>#{@dry_time.nil? ? "-" : (@dry_time.to_f/1000/60).round(1)} (min)</td>
@@ -246,12 +263,12 @@ class RoastProfile
       @dry_time = entry.t
     end
 
-    # time to first crack is the time at which BT hits 390F
-    if @FC_time.nil? && entry.BT >= 390
+    # time to first crack is the time at which BT hits 400F
+    if @FC_time.nil? && entry.BT >= 400
       @FC_time = entry.t
     end
 
-    # Maillard_time is the time from drying time to BT hitting 390F
+    # Maillard_time is the time from drying time to BT hitting 400F
     if !@dry_time.nil? && !@FC_time.nil?
       @Maillard_time = @FC_time - @dry_time
     end
