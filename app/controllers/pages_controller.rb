@@ -199,7 +199,7 @@ class RoastProfile
         "-" : number_to_percentage((@dry_time - @target_dry_time)*100 / @target_dry_time, precision: 1) })<br />
             400F : target #{(@target_Maillard_time/1000).round}s : actual #{@Maillard_time.nil? ? "-" : @Maillard_time/1000}s (#{(@Maillard_time.nil? || @target_Maillard_time.nil?) ?
         "-" : number_to_percentage((@Maillard_time - @target_Maillard_time)*100 / @target_Maillard_time, precision: 1) })<br />
-            430F : target #{(@target_dev_time/1000).round}s : actual #{@dev_time.nil? ? "-" : @dev_time/1000}s (#{(@dev_time.nil? || @target_dry_time.nil?) ?
+            440F : target #{(@target_dev_time/1000).round}s : actual #{@dev_time.nil? ? "-" : @dev_time/1000}s (#{(@dev_time.nil? || @target_dry_time.nil?) ?
         "-" : number_to_percentage((@dev_time - @target_dev_time)*100 / @target_dev_time, precision: 1) })<br />
           </td>
         </tr>

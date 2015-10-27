@@ -15,6 +15,10 @@ Rails.application.routes.draw do
   get 'uploadprofile' => 'pages#uploadprofile'
   post 'uploadprofile' => 'pages#createchart'
 
+  # ******* API *******
+  get 'api1/cmd' => 'api#get_command'
+
+
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 
