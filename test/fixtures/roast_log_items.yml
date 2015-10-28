@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  roast_id: 1
+  t: 1
+  fan: 1
+  heat: 1
+  et: 9.99
+  bt: 9.99
+  ror: 9.99
+
+two:
+  roast_id: 1
+  t: 1
+  fan: 1
+  heat: 1
+  et: 9.99
+  bt: 9.99
+  ror: 9.99

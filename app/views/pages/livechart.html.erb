@@ -1,0 +1,50 @@
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script type="text/javascript">
+
+    // Load the Visualization API and the piechart package.
+    google.load('visualization', '1', {'packages':['corechart']});
+
+    // Set a callback to run when the Google Visualization API is loaded.
+    google.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+
+//AJAX Call is compulsory !
+
+        var jsonData = $.ajax({
+            url: "/livechartjson/1",
+            dataType:"json",
+            async: false
+        }).responseText;
+
+        // Create our data table out of JSON data loaded from server.
+        var data = new google.visualization.DataTable(jsonData);
+
+        var options = {
+            title: '<%= @title %>',
+            subtitle: '<%= @subtitle %>',
+            is3D: 'true',
+            width: 800,
+            height: 600
+        };
+        // Instantiate and draw our chart, passing in some options.
+        // Do not forget to check your div ID
+        var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+    }
+</script>
+
+<script type="text/javascript">
+
+    $(document).ready(function(){
+        // First load the chart once
+        drawChart();
+        // Set interval to call the drawChart again
+        setInterval(drawChart, 5000);
+    });
+</script>
+
+<div class="headerdiv"><h1>jetKafe LIVE roast profile chart</h1></div>
+
+<div id="chart_div" style="margin-top:20px;"> </div>

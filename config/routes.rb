@@ -15,8 +15,13 @@ Rails.application.routes.draw do
   get 'uploadprofile' => 'pages#uploadprofile'
   post 'uploadprofile' => 'pages#createchart'
 
+  get 'livechart/:roast_id' => 'pages#livechart'
+  get 'livechartjson/:roast_id' => 'pages#livechart_json'
+
   # ******* API *******
   get 'api1/cmd' => 'api#get_command'
+  get 'api1/log' => 'api#log'
+
 
 
   # Example of regular route:

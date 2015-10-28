@@ -41,7 +41,22 @@ class ApiController < ApplicationController
   end
 
   # log a datapoint in an existing roast
+  #
+  # we're expecting the following params for now:
+  # rid = roast id
+  # t in ms
+  # bt as a float
+  # et as a float
+  #
   def log
+    item = RoastLogItem.new
+    item.roast_id = params[:rid]
+    item.t = params[:t]
+    item.bt = params[:bt]
+    item.et = params[:et]
+    item.save
 
+    # 1 = success
+    render json: {result: 1}
   end
 end

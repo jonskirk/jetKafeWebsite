@@ -1,7 +1,71 @@
 include ActionView::Helpers::NumberHelper
 
 class PagesController < ApplicationController
-  def home
+
+  # ****** LIVE CHART - ie chart of a possibly ongoing roast
+  #
+  def livechart
+    # our data comes from the DB
+    # our roast profile ID is in params
+
+    @title = "Roast ID #{params[:roast_id]}"
+    @subtitle = "Created by JSK 2015-10-28"
+
+    @chart = Chart.new
+    @chart.show_BT = true
+    @chart.show_ET = true
+    @chart.show_BT_ROR = true
+
+    @data = ""
+    RoastLogItem.where(roast_id: params[:roast_id]).order(:id).each do |item|
+      @data << "[#{item.t},#{item.bt},#{item.et},#{item.ror}],\n"
+    end
+
+  end
+
+  def livechart_json
+    logitems = RoastLogItem.where(roast_id: params[:roast_id]).order(:id)
+    #render json: logitems
+    #render plain: '{"1":"90"},{"2":"89"},{"3":"80"},{"4":"100"},{"5":"90"},{"6":"50"},{"7":"67"}'
+
+#     render plain: '{
+#   "cols": [
+#         {"id":"","label":"Topping","pattern":"","type":"string"},
+#         {"id":"","label":"Slices","pattern":"","type":"number"}
+#       ],
+#   "rows": [
+#         {"c":[{"v":"Mushrooms","f":null},{"v":3,"f":null}]},
+#         {"c":[{"v":"Onions","f":null},{"v":1,"f":null}]},
+#         {"c":[{"v":"Olives","f":null},{"v":1,"f":null}]},
+#         {"c":[{"v":"Zucchini","f":null},{"v":1,"f":null}]},
+#         {"c":[{"v":"Pepperoni","f":null},{"v":2,"f":null}]}
+#       ]
+# }'
+
+    # TODO: we need to put this in a proper JSON builder
+    # for now we'll just build a string
+
+    str = '{"cols":
+        [{"id":"","label":"t","pattern":"","type":"number"},
+        {"id":"","label":"BT","pattern":"","type":"number"},
+        {"id":"","label":"ET","pattern":"","type":"number"}],
+        "rows":['
+    firstitem = true
+    logitems.each do |item|
+      if firstitem
+        firstitem = false
+      else
+        str << ",\n"
+      end
+      str << "{\"c\":[{\"v\":#{item.t}},{\"v\":#{item.bt}},{\"v\":#{item.et}}]}"
+    end
+
+    str << "]}"
+
+    render plain: str
+
+    # this is working JSON
+    #render plain: '{"cols":[{"id":"","label":"t","pattern":"","type":"number"},{"id":"","label":"BT","pattern":"","type":"number"},{"id":"","label":"ET","pattern":"","type":"number"},{"id":"","label":"Heat","pattern":"","type":"number"},{"id":"","label":"BT-ROR-M","pattern":"","type":"number"}],"rows":[{"c":[{"v":269},{"v":79.1},{"v":78.7},{"v":50},{"v":0}]},{"c":[{"v":891},{"v":79.1},{"v":78.8},{"v":50},{"v":0}]},{"c":[{"v":1501},{"v":79.2},{"v":79.3},{"v":50},{"v":0}]},{"c":[{"v":2123},{"v":79},{"v":80.1},{"v":50},{"v":0}]},{"c":[{"v":2732},{"v":79.1},{"v":81.5},{"v":50},{"v":0}]},{"c":[{"v":3355},{"v":79},{"v":83.5},{"v":50},{"v":0}]},{"c":[{"v":3964},{"v":79.1},{"v":84.9},{"v":50},{"v":0}]},{"c":[{"v":4587},{"v":79.2},{"v":88.4},{"v":50},{"v":0}]},{"c":[{"v":5197},{"v":79.2},{"v":92.5},{"v":50},{"v":-0.04}]},{"c":[{"v":5821},{"v":79.2},{"v":96.2},{"v":50},{"v":0.04}]},{"c":[{"v":6430},{"v":79.4},{"v":100},{"v":50},{"v":0.17}]},{"c":[{"v":7054},{"v":79.3},{"v":106},{"v":50},{"v":-0.02}]},{"c":[{"v":7663},{"v":79.5},{"v":110.3},{"v":50},{"v":0.19}]},{"c":[{"v":8287},{"v":79.7},{"v":117.4},{"v":50},{"v":0.2}]},{"c":[{"v":8896},{"v":79.8},{"v":127.2},{"v":50},{"v":0.15}]},{"c":[{"v":9520},{"v":80},{"v":135.6},{"v":50},{"v":0.22}]},{"c":[{"v":10129},{"v":80.2},{"v":143.6},{"v":50},{"v":0.31}]},{"c":[{"v":10768},{"v":80.5},{"v":150.7},{"v":51},{"v":0.33}]},{"c":[{"v":31787},{"v":103.4},{"v":287.5},{"v":0},{"v":1.6}]},{"c":[{"v":32400},{"v":104.5},{"v":286.2},{"v":0},{"v":1.72}]},{"c":[{"v":33023},{"v":105.5},{"v":284},{"v":0},{"v":1.55}]},{"c":[{"v":33633},{"v":106.5},{"v":277.1},{"v":0},{"v":1.67}]},{"c":[{"v":34256},{"v":107.4},{"v":268.2},{"v":0},{"v":1.47}]}]}'
   end
 
   def createchart
