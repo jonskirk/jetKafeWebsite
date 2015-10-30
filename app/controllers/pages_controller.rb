@@ -9,7 +9,7 @@ class PagesController < ApplicationController
     # our roast profile ID is in params
 
     @title = "Roast ID #{params[:roast_id]}"
-    @subtitle = "Created by JSK 2015-10-28"
+    @subtitle = "Created by JSK"
 
     @chart = Chart.new
     @chart.show_BT = true
