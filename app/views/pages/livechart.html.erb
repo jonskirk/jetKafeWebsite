@@ -10,10 +10,8 @@
 
     function drawChart() {
 
-//AJAX Call is compulsory !
-
         var jsonData = $.ajax({
-            url: "/livechartjson/1",
+            url: "/livechartjson/<%= params[:roast_id] %>",
             dataType:"json",
             async: false
         }).responseText;
@@ -23,7 +21,7 @@
 
         var options = {
             title: '<%= @title %>',
-            subtitle: '<%= @subtitle %>',
+            //subtitle: '<%= @subtitle %>',
             is3D: 'true',
             width: 800,
             height: 600
