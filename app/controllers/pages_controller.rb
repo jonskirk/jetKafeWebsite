@@ -208,7 +208,7 @@ class PagesController < ApplicationController
   def process_line(line, lastentry)
     # if the line doesn't start with "Time: " it's a command or comment line
     # for now, ignore it
-    if !line.include? "Time: "
+    if (!line.include? "Time: ") && (!line.include? "T: ")
       return nil
     end
 
@@ -220,13 +220,43 @@ class PagesController < ApplicationController
 
     entry = LogEntry.new
     entry.offset = @offset
-    entry.t = line.match(/Time: ([^ ]*)/).captures[0].to_i
-    entry.heat = line.match(/Heat: ([^ ]*)/).captures[0].to_i
-    entry.fan = line.match(/Fan: ([^ ]*)/).captures[0].to_i
-    entry.ET = line.match(/ET: ([^ ]*)/).captures[0].to_f
-    entry.BT = line.match(/BT: ([^ ]*)/).captures[0].to_f
-    ror = line.match(/ROR: ([^ ]*)/)
-    entry.BT_ROR_M = ror.captures[0].to_f if !ror.nil?
+
+    if line.match(/Time: ([^ ]*)/)
+      entry.t = line.match(/Time: ([^ ]*)/).captures[0].to_i
+    elsif line.match(/T: ([^ ]*)/)
+      entry.t = line.match(/T: ([^ ]*)/).captures[0].to_i
+    end
+
+    if line.match(/Heat: ([^ ]*)/)
+      entry.heat = line.match(/Heat: ([^ ]*)/).captures[0].to_i
+    elsif line.match(/H: ([^ ]*)/)
+      entry.heat = line.match(/H: ([^ ]*)/).captures[0].to_i
+    end
+
+    if line.match(/Fan: ([^ ]*)/)
+      entry.fan = line.match(/Fan: ([^ ]*)/).captures[0].to_i
+    elsif
+      entry.fan = line.match(/F: ([^ ]*)/).captures[0].to_i
+    end
+
+    if line.match(/ET: ([^ ]*)/)
+      entry.ET = line.match(/ET: ([^ ]*)/).captures[0].to_f
+    elsif
+      entry.ET = line.match(/E: ([^ ]*)/).captures[0].to_f
+    end
+
+    if line.match(/BT: ([^ ]*)/)
+      entry.BT = line.match(/BT: ([^ ]*)/).captures[0].to_f
+    elsif
+      entry.BT = line.match(/B: ([^ ]*)/).captures[0].to_f
+    end
+
+    if line.match(/ROR: ([^ ]*)/)
+      entry.BT_ROR_M = line.match(/ROR: ([^ ]*)/).captures[0].to_f
+    elsif
+      entry.BT_ROR_M = line.match(/R: ([^ ]*)/).captures[0].to_f
+    end
+
     entry.get_ROR(lastentry) if !lastentry.nil?
     if !lastentry.nil? &&
         !@chart.PID_start.nil? && entry.t >= @chart.PID_start &&
