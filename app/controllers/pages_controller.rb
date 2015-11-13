@@ -102,10 +102,10 @@ class PagesController < ApplicationController
     @chart.show_BT = true
     @chart.show_ET = true
     @chart.show_fan = false
-    @chart.show_heat = true
+    @chart.show_heat = false
     @chart.show_PID = false
     @chart.show_BT_ROR = false
-    @chart.show_BT_ROR_M = true
+    @chart.show_BT_ROR_M = false
     @chart.show_ET_ROR = false
     #@chart.PID_start = params[:pid_start].to_i
     @chart.PID_end = 10000000
@@ -124,6 +124,8 @@ class PagesController < ApplicationController
 
     minute = 0
     temp_by_minute = []
+
+    t_at_max_bt = 0
 
     params[:profile].each_char do |c|
       if c == "\n"
@@ -162,7 +164,11 @@ class PagesController < ApplicationController
 
           count += 1
           max_t_measured = entry.t
-          max_BT_measured = entry.BT if entry.BT > max_BT_measured
+
+          if entry.BT > max_BT_measured
+            max_BT_measured = entry.BT
+            t_at_max_bt = entry.t
+          end
 
           # record the temps if we are passing a minute
           if entry.t > minute * 60000 && temp_by_minute[minute].nil?
@@ -175,6 +181,11 @@ class PagesController < ApplicationController
       end
     end
     datatable << "</table>".html_safe
+
+    # if we didn't have heat measurements, figure out dev time from timings
+    if profile.dev_time.nil?
+      profile.dev_time = t_at_max_bt - profile.dry_time - profile.Maillard_time
+    end
 
     # now display the summary data
     @log = "Entry count: #{count}<br />
@@ -208,7 +219,9 @@ class PagesController < ApplicationController
   def process_line(line, lastentry)
     # if the line doesn't start with "Time: " it's a command or comment line
     # for now, ignore it
-    if (!line.include? "Time: ") && (!line.include? "T: ")
+
+    #if (!line.include? "Time: ") && (!line.include? "T: ") && (!line.include? "t: ")
+    if (!line.start_with? "Time: ") && (!line.start_with? "T: ") && (!line.start_with? "t: ")
       return nil
     end
 
@@ -221,10 +234,12 @@ class PagesController < ApplicationController
     entry = LogEntry.new
     entry.offset = @offset
 
-    if line.match(/Time: ([^ ]*)/)
+    if line.match(/^Time: ([^ ]*)/)
       entry.t = line.match(/Time: ([^ ]*)/).captures[0].to_i
-    elsif line.match(/T: ([^ ]*)/)
+    elsif line.match(/^T: ([^ ]*)/)
       entry.t = line.match(/T: ([^ ]*)/).captures[0].to_i
+    elsif line.match(/^t: ([^ ]*)/)
+      entry.t = line.match(/t: ([^ ]*)/).captures[0].to_i
     end
 
     if line.match(/Heat: ([^ ]*)/)
@@ -235,25 +250,25 @@ class PagesController < ApplicationController
 
     if line.match(/Fan: ([^ ]*)/)
       entry.fan = line.match(/Fan: ([^ ]*)/).captures[0].to_i
-    elsif
+    elsif line.match(/F: ([^ ]*)/)
       entry.fan = line.match(/F: ([^ ]*)/).captures[0].to_i
     end
 
     if line.match(/ET: ([^ ]*)/)
       entry.ET = line.match(/ET: ([^ ]*)/).captures[0].to_f
-    elsif
+    elsif line.match(/E: ([^ ]*)/)
       entry.ET = line.match(/E: ([^ ]*)/).captures[0].to_f
     end
 
     if line.match(/BT: ([^ ]*)/)
       entry.BT = line.match(/BT: ([^ ]*)/).captures[0].to_f
-    elsif
+    elsif line.match(/B: ([^ ]*)/)
       entry.BT = line.match(/B: ([^ ]*)/).captures[0].to_f
     end
 
     if line.match(/ROR: ([^ ]*)/)
       entry.BT_ROR_M = line.match(/ROR: ([^ ]*)/).captures[0].to_f
-    elsif
+    elsif line.match(/R: ([^ ]*)/)
       entry.BT_ROR_M = line.match(/R: ([^ ]*)/).captures[0].to_f
     end
 
@@ -377,6 +392,7 @@ class RoastProfile
     # end
 
     # drop temp is when heat goes to zero and stays there
+    # if we're measuring heat!!
     if entry.heat == 0
       if @drop_temp.nil?
         @drop_temp = entry.BT
