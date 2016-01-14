@@ -2,6 +2,8 @@ include ActionView::Helpers::NumberHelper
 
 class PagesController < ApplicationController
 
+  before_action :authenticate_user!, except: :home
+
   # ****** LIVE CHART - ie chart of a possibly ongoing roast
   #
   def livechart
