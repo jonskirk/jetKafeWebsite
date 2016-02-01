@@ -2,7 +2,11 @@ include ActionView::Helpers::NumberHelper
 
 class PagesController < ApplicationController
 
-  before_action :authenticate_user!, except: :home
+  before_action :authenticate_user!, except: [:home, :home2]
+
+  def home
+    render :layout => false
+  end
 
   # ****** LIVE CHART - ie chart of a possibly ongoing roast
   #

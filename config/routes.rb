@@ -11,6 +11,8 @@ Rails.application.routes.draw do
   #root '/public/home.html'
   root 'pages#home'
 
+  get 'home2' => 'pages#home2'
+
   get 'discussion' => 'pages#discussion'
 
   get 'uploadprofile' => 'pages#uploadprofile'
