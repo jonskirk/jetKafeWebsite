@@ -359,6 +359,9 @@ header h1 span {
 section.section-content {
   background-color: #ffffff;
 }
+#about{
+  margin-top: 30px;
+}
 /* ==============
     ADVERTISTING
    ============== */
