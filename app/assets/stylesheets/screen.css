@@ -362,6 +362,9 @@ section.section-content {
 #about{
   margin-top: 30px;
 }
+.surround {
+  padding: 0 20px;
+}
 /* ==============
     ADVERTISTING
    ============== */
