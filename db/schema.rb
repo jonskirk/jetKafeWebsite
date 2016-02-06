@@ -11,10 +11,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160114180821) do
+ActiveRecord::Schema.define(version: 20160205234447) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "list_history_items", force: :cascade do |t|
+    t.string   "email"
+    t.string   "note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "list_members", force: :cascade do |t|
+    t.string   "email"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "roast_log_items", force: :cascade do |t|
     t.integer  "roast_id"
