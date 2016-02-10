@@ -205,14 +205,14 @@
   function success(message) {
     $("#ml_result").removeClass('failure').addClass('success').css('display','inline-block');
     $("#ml_cross").css('display','none');
-    $("#ml_check").css('display','inline-block');
+    $("#ml_check").css({ 'display': 'inline-block', 'float': 'left' });
     $("#ml_message").html(message).css('display','inline-block');
     $('#ml_submit').attr("disabled", true);
   }
   function showError(message) {
     $("#ml_result").addClass('failure').css('display','inline-block');
-    $("#ml_cross").css('display','inline-block');
-    $("#ml_message").html(message).css('display','inline-block');
+    $("#ml_cross").css({ 'display': 'inline-block', 'float': 'left' });
+    $("#ml_message").html(message).css({ 'display': 'inline-block', 'margin': '3px 10px' });
   }
   function addWatermark() {
     if ($("#ml_email").val().length == 0) {
