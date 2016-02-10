@@ -1,26 +1,226 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html>
-<head>
-  <title>jetKafe</title>
-  <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
-  <%= stylesheet_link_tag 'oldhome', media: 'all', 'data-turbolinks-track' => true %>
-  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
-  <%= csrf_meta_tags %>
-</head>
-<body>
-
-<% if notice %>
-    <p class="alert alert-success"><%= notice %></p>
-<% end %>
-<% if alert %>
-    <p class="alert alert-danger"><%= alert %></p>
-<% end %>
-
-<div align="center" class="maindiv">
-  <img src="jetKafe%20logo.png" style="margin-top:100px; margin-bottom: 20px; width:600px;" />
-  <div align="center" style="padding-bottom: 200px; ">Intelligent, reproducible, shareable home coffee roasting.</div>
+<!-- navigation start-->
+<div class="nav">
+  <ul>
+    <li><a class="exlink" href="#"><span class="nav-label">Home</span></a></li>
+    <li><a class="exlink" href="#"><span class="nav-label">About</span></a></li>
+    <li><a class="exlink" href="#"><span class="nav-label">Team</span></a></li>
+    <li><a class="exlink" href="#"><span class="nav-label">Blog</span></a></li>
+    <li><a class="exlink" href="#"><span class="nav-label">Contact</span></a></li>
+  </ul>
 </div>
-<div align="center" style="margin-top:30px;">♫  Stay tuned …</div>
 
-</body>
-</html>
+<a href="javascript:void(0)" class="nav-trigger">
+  <div class="hamburger">
+    <div class="nav-line top-nav"></div>
+    <div class="nav-line mid-nav"></div>
+    <div class="nav-line bottom-nav"></div>
+  </div>
+</a>
+<!-- navigation end -->
+
+<!-- main start -->
+<div class="main">
+
+  <header class="parallax-window row" data-parallax="scroll" data-image-src="<%= asset_path 'background/cup-creame.jpg' %>" id="intro-single">
+    <div class="opacity"></div><!-- opacity -->
+    <div class="container">
+      <div class="caption text-center">
+        <div class="logo"><img src="<%= asset_path "jetkafe-logo.svg" %>" alt="jetKafe"></div>
+        <h1>jet<span>Kafe</span></h1>
+      </div>
+    </div>
+    <!-- <div><img src="/images/cup.png" alt="" class="overlay"></div> -->
+  </header>
+
+  <section class="section-content clearfix row">
+    <div class="container small-12">
+      <div data-magellan-expedition="fixed">
+        <dl class="sub-nav">
+          <dd data-magellan-arrival="build"><a class="text-logo" href="#home">about jet<span>Kafe</span></a></dd>
+          <dd data-magellan-arrival="build"><a class="text-logo" href="#joinus">join <span>us</span></a></dd>
+        </dl>
+      </div>
+      <div>
+        <div class="row">
+          <div class="columns small-12" id="about">
+            <div class="surround">
+              <h2>Intelligent, reproducible, shareable home coffee roasting.</h2>
+              <p>The tantalizing aroma of freshly roasted coffee ... the delicate taste of a subtle blend of beans ...
+                the satisfaction of creating your own personalized cup ...</p>
+              <p>Traditionally, coffee roasting has been the domain of a small number of artisan roasters. Roasting coffee at
+              home is not easy with today's tools, which lack the sophistication required to modulate the temperature of the beans
+              to the precise temperature curve required to generate consistent results.</p>
+              <p>Through a combination of new internet-enabled roasting technology, which makes following any temperature profile as easy as clicking a button,
+                and a new sharing service which will enable you to download 'roast profiles' directly to your home roaster, and share your
+              own results for anyone to follow or improve on, jetKafe is making home coffee roasting accessible for everyone.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <header class="parallax-window row" data-parallax="scroll" data-image-src="<%= asset_path 'background/roasted-beans.jpg' %>" id="intro-small">
+    <div class="opacity"></div><!-- opacity -->
+    <div class="container row" id="joinus">
+      <div class="surround">
+        <div class="caption text-center small-12 medium-8 medium-centered large-centered large-6 columns">
+          <h2>We're democratizing coffee roasting. Will you join us?</h2>
+
+          <div id="subscribe" class="big-print">
+            <div class="input-group">
+              <input class="input-group-field" id="ml_email" type="email">
+
+              <div class="input-group-button">
+                <button type="submit" class="button btn-base" id="ml_submit">Subscribe</button>
+              </div>
+            </div>
+
+            <div class="result" id="ml_result">
+                <div id="ml_check"><i class="icon svg-check icon-xs"><svg viewBox="0 0 32 32" height="32" width="32" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1"> <path d="M16 2.688c-7.375 0-13.313 5.938-13.313 13.313s5.938 13.313 13.313 13.313c7.375 0 13.313-5.938 13.313-13.313s-5.938-13.313-13.313-13.313zM16 28.25c-6.75 0-12.25-5.5-12.25-12.25s5.5-12.25 12.25-12.25c6.75 0 12.25 5.5 12.25 12.25s-5.5 12.25-12.25 12.25zM22.688 11.25l-8.563 8.313-3-3c-0.313-0.313-0.813-0.313-1.125 0s-0.313 0.813 0 1.125l3.563 3.563c0.125 0.125 0.313 0.188 0.563 0.188 0.188 0 0.375-0.063 0.5-0.188l9.125-8.875c0.375-0.313 0.375-0.813 0.063-1.125s-0.813-0.313-1.125 0z"/> </svg> </i></div>
+                <div id="ml_cross"><i class="icon svg-close-circle icon-xs"><svg viewBox="0 0 32 32" height="32" width="32" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" version="1.1"> <path d="M6.563 6.563c-5.188 5.188-5.188 13.688 0 18.875s13.688 5.188 18.875 0c5.188-5.188 5.188-13.625 0-18.875-5.188-5.188-13.625-5.188-18.875 0zM24.688 24.688c-4.813 4.75-12.563 4.75-17.375 0-4.75-4.813-4.75-12.563 0-17.375 4.813-4.75 12.563-4.75 17.375 0 4.75 4.813 4.75 12.563 0 17.375zM10.75 10l-0.813 0.75 5.313 5.25-5.25 5.25 0.75 0.75 5.25-5.25 5.25 5.25 0.75-0.75-5.25-5.25 5.313-5.25-0.813-0.75-5.25 5.25z"/> </svg> </i></div>
+                <div id="ml_message">Thank you! Your email has been stored.</div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- footer section start -->
+  <footer id="footer" class="row">
+    <div class="container small-12">
+      <div class="footer-holder">
+        <div class="row">
+          <div class="column large-4 medium-6 small-12">
+            <div class="text-frame">
+              <h4 style="display:none">Infoboard</h4>
+              <p>Created by a globe-trotting international team of coffee lovers, jetKafe is working to bring you
+               a new dimension of coffee later in 2016. Subscribe to our email list to learn more about home coffee roasting,
+              and to follow our progress along the way.</p>
+            </div>
+          </div>
+          <% if false %>
+          <div class="column large-2 medium-6 small-12">
+            <div class="panel">
+              <h4>Support Pages</h4>
+              <ul class="no-bullet">
+                <li><a href="#">Press</a></li>
+                <li><a href="#">Legal</a></li>
+                <li><a href="#">FAQ &amp; Help</a></li>
+                <li><a href="#">Pricing Options</a></li>
+                <li><a href="#">Terms &amp; Conditions</a></li>
+                <li><a href="#">Support</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="column large-3 medium-6 small-12">
+            <div class="text-holder">
+              <h4>New York, NY</h4>
+              <strong class="phone"><a href="#">01 596 456 295</a></strong>
+              <span class="available">Available from 9AM - 18PM</span>
+              <address>643 6th Avenue, 10011, USA</address>
+              <p class="email">contact@jetkafe.com</p>
+            </div>
+          </div>
+          <% end %>
+          <div class="column large-3 medium-6 small-12">
+            <div class="text-holder">
+              <h4>San Francisco, CA, USA<br />
+                  Eugene, OR, USA<br />
+                  Frontenac, ON, Canada</h4>
+              <% if false %>
+              <strong class="phone"><a href="#">01 796 456 295</a></strong>
+              <span class="available">Available from 9AM - 18PM</span>
+              <address>Montgomery 274, 94104 , USA</address>
+              <% end %>
+              <p><a href="mailto:contact@jetkafe.com" class="email">contact@jetkafe.com</a></p>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="copyright">
+            <p>JETKAFE 2015-<%= Date.today.year %> © All Rights Reserved</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <!-- footer section end -->
+</div>
+
+<style>
+  #ml_result {
+    background: white;
+    z-index: 1000;
+    position: relative;
+    padding: 10px;
+    display:none;
+  }
+  #ml_result div {
+    /*display:inline-block;*/
+    display:none;
+  }
+  .failure {
+    border-top: 2px solid red;
+  }
+  .success {
+    border-top: 2px solid green;
+  }
+</style>
+
+<script>
+  var wm = "Enter your email address";
+  function init() {
+    $('#ml_submit').click(handle);
+    addWatermark();
+    $("#ml_email").blur(addWatermark);
+    $("#ml_email").focus(removeWatermark);
+  }
+  function handle() {
+    var email = $("#ml_email").val().trim();
+    if (email.length == 0 || email.indexOf('@') == -1) {
+      showError("Please enter a valid email address.");
+      return;
+    }
+
+    $.ajax({
+      url: '/submitemail?email=' + encodeURI(email),
+      success:function(data){
+        var result = parseInt(data['result']);
+        if (result == 1) {
+          success("Your email is already registered. Thank you!");
+        } else {
+          success("Thank you! We'll keep you posted on our progress.");
+        }
+      },
+      error: function(data) {
+        alert(data['status']+' '+data['responseText']);
+        showError("There was a problem submitting your email. Please try again.");
+      }
+    });
+  }
+  function success(message) {
+    $("#ml_result").removeClass('failure').addClass('success').css('display','inline-block');
+    $("#ml_cross").css('display','none');
+    $("#ml_check").css('display','inline-block');
+    $("#ml_message").html(message).css('display','inline-block');
+    $('#ml_submit').attr("disabled", true);
+  }
+  function showError(message) {
+    $("#ml_result").addClass('failure').css('display','inline-block');
+    $("#ml_cross").css('display','inline-block');
+    $("#ml_message").html(message).css('display','inline-block');
+  }
+  function addWatermark() {
+    if ($("#ml_email").val().length == 0) {
+      $("#ml_email").val(wm).addClass("watermark");
+    }
+  }
+  function removeWatermark() {
+    $("#ml_email").val("").removeClass("watermark");
+  }
+  $(document).ready(init);
+</script>
