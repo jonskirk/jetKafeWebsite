@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+  <title>jetKafe</title>
+  <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+  <%= stylesheet_link_tag 'oldhome', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+
+<% if notice %>
+    <p class="alert alert-success"><%= notice %></p>
+<% end %>
+<% if alert %>
+    <p class="alert alert-danger"><%= alert %></p>
+<% end %>
+
+<div align="center" class="maindiv">
+  <img src="jetKafe%20logo.png" style="margin-top:100px; margin-bottom: 20px; width:600px;" />
+  <div align="center" style="padding-bottom: 200px; ">Intelligent, reproducible, shareable home coffee roasting.</div>
+</div>
+<div align="center" style="margin-top:30px;">♫  Stay tuned …</div>
+
+</body>
+</html>

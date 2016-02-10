@@ -2,7 +2,11 @@ include ActionView::Helpers::NumberHelper
 
 class PagesController < ApplicationController
 
-  before_action :authenticate_user!, except: :home
+  before_action :authenticate_user!, except: [:home, :home2, :submitemail]
+
+  def home
+    #render :layout => false
+  end
 
   # ****** LIVE CHART - ie chart of a possibly ongoing roast
   #
@@ -283,7 +287,41 @@ class PagesController < ApplicationController
 
     entry
   end
+
+  # mailing list management
+  # we're expecting the email in params[:email]
+  #
+  def submitemail
+    # do we have an email?
+    if !params[:email]
+      render json: {:result => '0'}
+      return
+    end
+
+    # is this email already stored?
+    current = ListMember.find_by_email(params[:email])
+    if current
+      render json: {:result => '1'}
+      return
+    end
+
+    # great, so store it
+    member = ListMember.new
+    member.email = params[:email]
+    member.save
+
+    # also make an entry in our history table for tracking purposes
+    # this way if someone unsubscribes, we can delete them from the list members table, but still have an audit trail
+    history = ListHistoryItem.new
+    history.email = params[:email]
+    history.note = "Subscribed via home page"
+    history.save
+
+    # return a success code
+    render json: {:result => '2'}
+  end
 end
+# ************ END PagesController -- todo: move everything else out
 
 # single place to put specifications for the chart
 #

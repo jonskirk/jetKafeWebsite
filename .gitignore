@@ -15,6 +15,9 @@
 /log/*.log
 /tmp
 
-# Ignore Mac
+# Ignore Mac Filesystem Files
 .DS_Store
+
+# Ignore RubyMine IDE files
+/.idea
 
