@@ -222,13 +222,29 @@ class PagesController < ApplicationController
     s
   end
 
+  # as of 2017-11 our primary log entries now look like this:
+  # T=129, AMB=78.9, ET=85.915, BT=74.9, Heat=35, Fan=1
+  #
   def process_line(line, lastentry)
     # if the line doesn't start with "Time: " it's a command or comment line
     # for now, ignore it
 
     #if (!line.include? "Time: ") && (!line.include? "T: ") && (!line.include? "t: ")
-    if (!line.start_with? "Time: ") && (!line.start_with? "T: ") && (!line.start_with? "t: ")
-      return nil
+    # if (!line.start_with? "Time: ") && (!line.start_with? "T: ") && (!line.start_with? "t: ")
+    #   return nil
+    # end
+
+    return nil unless (line.start_with? "T=")
+
+    entry = LogEntry.new
+    entry.offset = @offset
+
+    line.split(',').map{|x| x.strip }.each do |item|
+      entry.t = item.sub("T=","").to_i if (item.start_with? "T=")
+      entry.heat = item.sub("Heat=","").to_f if (item.start_with? "Heat=")
+      entry.fan = item.sub("Fan=","").to_f if (item.start_with? "Fan=")
+      entry.ET = item.sub("ET=","").to_f if (item.start_with? "ET=")
+      entry.BT = item.sub("BT=","").to_f if (item.start_with? "BT=")
     end
 
     # the general format is
@@ -237,46 +253,46 @@ class PagesController < ApplicationController
     # we want to create a data row of the form
     # [time,ET,BT,ET-ROR,BT-ROR]
 
-    entry = LogEntry.new
-    entry.offset = @offset
-
-    if line.match(/^Time: ([^ ]*)/)
-      entry.t = line.match(/Time: ([^ ]*)/).captures[0].to_i
-    elsif line.match(/^T: ([^ ]*)/)
-      entry.t = line.match(/T: ([^ ]*)/).captures[0].to_i
-    elsif line.match(/^t: ([^ ]*)/)
-      entry.t = line.match(/t: ([^ ]*)/).captures[0].to_i
-    end
-
-    if line.match(/Heat: ([^ ]*)/)
-      entry.heat = line.match(/Heat: ([^ ]*)/).captures[0].to_i
-    elsif line.match(/H: ([^ ]*)/)
-      entry.heat = line.match(/H: ([^ ]*)/).captures[0].to_i
-    end
-
-    if line.match(/Fan: ([^ ]*)/)
-      entry.fan = line.match(/Fan: ([^ ]*)/).captures[0].to_i
-    elsif line.match(/F: ([^ ]*)/)
-      entry.fan = line.match(/F: ([^ ]*)/).captures[0].to_i
-    end
-
-    if line.match(/ET: ([^ ]*)/)
-      entry.ET = line.match(/ET: ([^ ]*)/).captures[0].to_f
-    elsif line.match(/E: ([^ ]*)/)
-      entry.ET = line.match(/E: ([^ ]*)/).captures[0].to_f
-    end
-
-    if line.match(/BT: ([^ ]*)/)
-      entry.BT = line.match(/BT: ([^ ]*)/).captures[0].to_f
-    elsif line.match(/B: ([^ ]*)/)
-      entry.BT = line.match(/B: ([^ ]*)/).captures[0].to_f
-    end
-
-    if line.match(/ROR: ([^ ]*)/)
-      entry.BT_ROR_M = line.match(/ROR: ([^ ]*)/).captures[0].to_f
-    elsif line.match(/R: ([^ ]*)/)
-      entry.BT_ROR_M = line.match(/R: ([^ ]*)/).captures[0].to_f
-    end
+    # entry = LogEntry.new
+    # entry.offset = @offset
+    #
+    # if line.match(/^Time: ([^ ]*)/)
+    #   entry.t = line.match(/Time: ([^ ]*)/).captures[0].to_i
+    # elsif line.match(/^T: ([^ ]*)/)
+    #   entry.t = line.match(/T: ([^ ]*)/).captures[0].to_i
+    # elsif line.match(/^t: ([^ ]*)/)
+    #   entry.t = line.match(/t: ([^ ]*)/).captures[0].to_i
+    # end
+    #
+    # if line.match(/Heat: ([^ ]*)/)
+    #   entry.heat = line.match(/Heat: ([^ ]*)/).captures[0].to_i
+    # elsif line.match(/H: ([^ ]*)/)
+    #   entry.heat = line.match(/H: ([^ ]*)/).captures[0].to_i
+    # end
+    #
+    # if line.match(/Fan: ([^ ]*)/)
+    #   entry.fan = line.match(/Fan: ([^ ]*)/).captures[0].to_i
+    # elsif line.match(/F: ([^ ]*)/)
+    #   entry.fan = line.match(/F: ([^ ]*)/).captures[0].to_i
+    # end
+    #
+    # if line.match(/ET: ([^ ]*)/)
+    #   entry.ET = line.match(/ET: ([^ ]*)/).captures[0].to_f
+    # elsif line.match(/E: ([^ ]*)/)
+    #   entry.ET = line.match(/E: ([^ ]*)/).captures[0].to_f
+    # end
+    #
+    # if line.match(/BT: ([^ ]*)/)
+    #   entry.BT = line.match(/BT: ([^ ]*)/).captures[0].to_f
+    # elsif line.match(/B: ([^ ]*)/)
+    #   entry.BT = line.match(/B: ([^ ]*)/).captures[0].to_f
+    # end
+    #
+    # if line.match(/ROR: ([^ ]*)/)
+    #   entry.BT_ROR_M = line.match(/ROR: ([^ ]*)/).captures[0].to_f
+    # elsif line.match(/R: ([^ ]*)/)
+    #   entry.BT_ROR_M = line.match(/R: ([^ ]*)/).captures[0].to_f
+    # end
 
     entry.get_ROR(lastentry) if !lastentry.nil?
     if !lastentry.nil? &&
