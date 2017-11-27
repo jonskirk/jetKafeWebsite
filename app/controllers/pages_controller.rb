@@ -190,7 +190,9 @@ class PagesController < ApplicationController
 
     # if we didn't have heat measurements, figure out dev time from timings
     if profile.dev_time.nil?
-      profile.dev_time = t_at_max_bt - profile.dry_time - profile.Maillard_time
+      profile.dev_time = t_at_max_bt
+                         - (profile.dry_time.present? ? profile.dry_time : 0)
+                         - (profile.Maillard_time.present? ? profile.Maillard_time : 0)
     end
 
     # now display the summary data
